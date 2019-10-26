@@ -15,7 +15,11 @@
 
   <!-- Custom styles for this template -->
   <link href="css/simple-sidebar.css" rel="stylesheet">
-
+  <style>
+    .draggable {
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
@@ -67,9 +71,13 @@
       </nav>
 
       <div class="container-fluid">
-        <h1 class="mt-4">Simple Sidebar</h1>
-        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
+        <div style="position: relative; display: block;">
+          <canvas width="1000px" height="500px" style=" display: block; background-color: #F0F0F0; border: 1px solid black;" id="canvas">
+          </canvas>
+          <div class="draggable" style="position: absolute; bottom: 0; left: 1050px; width: 50px; height: 50px; background-color: red">WC</div>
+          <div class="draggable" style="position: absolute; bottom: 60px; left: 1050px; width: 50px; height: 50px; background-color: blue">Gate</div>
+          <div class="draggable" style="position: absolute; bottom: 120px; left: 1050px; width: 50px; height: 50px; background-color: green">Store</div>
+        </div>
       </div>
     </div>
     <!-- /#page-content-wrapper -->
@@ -80,13 +88,57 @@
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <!-- Menu Toggle Script -->
   <script>
+    const canvas = document.getElementById("canvas");
+    const canvasWidth = getComputedStyle(canvas).width;
+    const canvasHeight = getComputedStyle(canvas).height;
+    var ctx = canvas.getContext("2d");
     $("#menu-toggle").click(function(e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
+    const p = $.get("http://localhost:5000/getPosition", function(data) {
+      // const coordArray = JSON.parse(data);
+      const coordArray = [[0.07825639803445536, 0.02696004990750679], [0.02696004990750679, 0.2239004990750679], [0.2239004990750679, 0.02390033990750679]]
+      
+      for(let i = 0; i < coordArray.length - 1; i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = "#FF0000";
+        ctx.moveTo(coordArray[i][0] * 1000, coordArray[i][1] * 500);
+        ctx.lineTo(coordArray[i+1][0] * 1000, coordArray[i+1][1] * 500);
+        ctx.stroke();
+      }
+      
+      
+      
+      console.log(data);
+    });
+
+    for(let x of document.getElementsByClassName("draggable")) {
+      console.log(x)
+      if(window.sessionStorage.getItem(x.innerText)) {
+        x.offsetLeft = JSON.parse(sessionStorage.getItem(x.innerText))[0]
+        x.offsetLeft = JSON.parse(sessionStorage.getItem(x.innerText))[1]
+      }
+    }
+    
+    
+    $( function() {
+      $( ".draggable" ).draggable({
+        containment: "parent",
+        stop: function( event, ui ) {
+          let posX = event.target.offsetLeft
+          let posY = event.target.offsetTop
+          
+          window.sessionStorage.setItem(event.target.innerText, `[${posX}, ${posY}]`)
+          console.log(posX, posY)
+        }
+      });
+    } );
+    
+    
   </script>
 
 </body>
