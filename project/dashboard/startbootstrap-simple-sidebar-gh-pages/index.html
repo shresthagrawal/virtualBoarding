@@ -16,10 +16,10 @@
   <!-- Custom styles for this template -->
   <link href="css/simple-sidebar.css" rel="stylesheet">
   <style>
-    .draggable {
-      cursor: pointer;
-    }
-  </style>
+      .draggable {
+        cursor: pointer;
+      }
+    </style>
 </head>
 
 <body>
@@ -71,12 +71,12 @@
       </nav>
 
       <div class="container-fluid">
-        <div style="position: relative; display: block;">
-          <canvas width="1000px" height="500px" style=" display: block; background-color: #F0F0F0; border: 1px solid black;" id="canvas">
+        <div style="position: relative; display: block;" id="canvasContainer">
+          <canvas id="canvas" width="1000px" height="500px" style=" display: block; border: 1px solid black;" id="canvas">
           </canvas>
-          <div class="draggable" style="position: absolute; bottom: 0; left: 1050px; width: 50px; height: 50px; background-color: red">WC</div>
-          <div class="draggable" style="position: absolute; bottom: 60px; left: 1050px; width: 50px; height: 50px; background-color: blue">Gate</div>
-          <div class="draggable" style="position: absolute; bottom: 120px; left: 1050px; width: 50px; height: 50px; background-color: green">Store</div>
+          <img src="./poi/airport.png" oncontextmenu="removeElement(event)" class="draggable first" id="drag1" style="position: absolute; bottom: 0; left: 1050px; width: 100px; height: 100px;"></img>
+          <img src="./poi/gate.png" oncontextmenu="removeElement(event)" class="draggable first" id="drag2" style="position: absolute; bottom: 110px; left: 1050px; width: 100px; height: 100px;"></img>
+          <img src="./poi/toilet.png" oncontextmenu="removeElement(event)" class="draggable first" id="drag3" style="position: absolute; bottom: 220px; left: 1050px; width: 100px; height: 100px;"></img>
         </div>
       </div>
     </div>
@@ -92,13 +92,24 @@
   <!-- Menu Toggle Script -->
   <script>
     const canvas = document.getElementById("canvas");
-    const canvasWidth = getComputedStyle(canvas).width;
-    const canvasHeight = getComputedStyle(canvas).height;
+    const canvasWidth = getComputedStyle(canvas).width.substr(0, getComputedStyle(canvas).width.length - 2)
+    const canvasHeight = getComputedStyle(canvas).height.substr(0, getComputedStyle(canvas).height.length - 2)
     var ctx = canvas.getContext("2d");
     $("#menu-toggle").click(function(e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
+
+
+    var background = new Image();
+    background.src = "./plan_small.jpg";
+    
+    background.onload = function() {
+      ctx.drawImage(background, 0, 0, background.width, background.height,     // source rectangle
+                   0, 0, canvasWidth, canvasHeight);
+    }
+  
+
     const p = $.get("http://localhost:5000/getPosition", function(data) {
       // const coordArray = JSON.parse(data);
       const coordArray = [[0.07825639803445536, 0.02696004990750679], [0.02696004990750679, 0.2239004990750679], [0.2239004990750679, 0.02390033990750679]]
@@ -110,35 +121,96 @@
         ctx.lineTo(coordArray[i+1][0] * 1000, coordArray[i+1][1] * 500);
         ctx.stroke();
       }
-      
+
       
       
       console.log(data);
     });
 
-    for(let x of document.getElementsByClassName("draggable")) {
-      console.log(x)
-      if(window.sessionStorage.getItem(x.innerText)) {
-        x.offsetLeft = JSON.parse(sessionStorage.getItem(x.innerText))[0]
-        x.offsetLeft = JSON.parse(sessionStorage.getItem(x.innerText))[1]
+    const draggables = [...document.getElementsByClassName("draggable")];
+    for(let j = 0; j < draggables.length; j++) {
+      let x = draggables[j];
+      if(window.localStorage.getItem(x.id)) {
+        let arr = JSON.parse(window.localStorage.getItem(x.id));
+        for(let i = 0; i < arr.length; i++) {
+          let newNode = x.cloneNode(true);
+          newNode.style.left = arr[i][0] + "px";
+          newNode.style.top = arr[i][1] + "px";
+          newNode.classList.remove("first");
+          document.getElementById("canvasContainer").appendChild(newNode);
+        }
       }
     }
     
     
     $( function() {
-      $( ".draggable" ).draggable({
+      const draggableObj = {
         containment: "parent",
+        start: function (event, ui ) {
+          if (event.target.classList.contains("first")) {
+            const newNode = event.target.cloneNode(true);
+            event.target.classList.remove("first");
+            document.getElementById("canvasContainer").appendChild(newNode)
+            $( ".draggable" ).draggable(draggableObj);
+
+            
+            
+          } else {
+            let newObj = JSON.parse(window.localStorage.getItem(event.target.id));
+            let left = event.target.style.left.substr(0, event.target.style.left.length - 2)
+            let top = event.target.style.top.substr(0, event.target.style.top.length - 2)
+            console.log([+event.target.style.left, +event.target.style.top])
+            removeItem(newObj, [+left, +top])
+            window.localStorage.setItem(event.target.id, JSON.stringify(newObj));
+          }
+        
+        },
         stop: function( event, ui ) {
           let posX = event.target.offsetLeft
           let posY = event.target.offsetTop
-          
-          window.sessionStorage.setItem(event.target.innerText, `[${posX}, ${posY}]`)
+          let setValue = window.localStorage.getItem(event.target.id);
+          if(setValue) {
+            
+            let obj = JSON.parse(setValue);
+            obj.push([posX, posY]);
+            window.localStorage.setItem(event.target.id, JSON.stringify(obj))  
+          } else {
+            window.localStorage.setItem(event.target.id, `[[${posX}, ${posY}]]`)
+          }
           console.log(posX, posY)
         }
-      });
+      };
+      $( ".draggable" ).draggable(draggableObj);
     } );
     
-    
+    function removeElement(event) {
+      event.preventDefault();
+      if(event.target.classList.contains("first")) {
+        return;
+      }
+      document.getElementById('canvasContainer').removeChild(event.target);
+      let newObj = JSON.parse(window.localStorage.getItem(event.target.id));
+      let left = event.target.style.left.substr(0, event.target.style.left.length - 2)
+      let top = event.target.style.top.substr(0, event.target.style.top.length - 2)
+     
+      removeItem(newObj, [+left, +top])
+
+      window.localStorage.setItem(event.target.id, JSON.stringify(newObj));
+
+    }
+
+    function removeItem(newObj, item) {
+ 
+      for(let i= 0; i < newObj.length; i++) {
+        let array1 = newObj[i]
+        let array2 = item
+        
+        if(array1.length === array2.length && array1.sort().every(function(value, index) { return value === array2.sort()[index]})) {
+          console.log("found")
+          newObj.splice(i, 1);
+        }
+      }
+    }
   </script>
 
 </body>

@@ -48,20 +48,8 @@ def flightData():
 def getPos():
     return json.dumps(position_data)
 
-
-def triang(data):
-    obj = json.loads(data)
-    data1 = float(obj["device1"])
-    data2 = float(obj["device3"])
-    distance = 0.1
-
-    s = (data1 + data2 + distance) / 2.0
-    y = 2.0 * (abs((s * (s - data1) * (s - data2) * (s - distance))) ** 0.5) / distance
-    x = abs(((data1 * data1) - (y * y))) ** 0.5
-    return [x, y]
-
 def addPos():
-    url = "http://40.68.184.28:8086/get_location"
+    url = "http://40.68.184.28:8086/get_scaled_location"
 
     
 
@@ -77,13 +65,13 @@ def addPos():
         'Access-Control-Allow-Origin': "localhost"
         }
 
-    response = requests.request("GET", url, headers=headers).text
-    print(triang(response))
-    position_data.append(triang(response))
+    response = json.loads(requests.request("GET", url, headers=headers).text)
+   
+    position_data.append([float(response["x"]), float(response["y"])])
     if(len(position_data) >= 400):
         position_data.pop(0)
     
     
 if __name__ == "__main__":
-    sched.add_interval_job(addPos, seconds = 1, max_instances=100)
+    sched.add_interval_job(addPos, seconds=1, max_instances=100)
     app.run(debug=True)
