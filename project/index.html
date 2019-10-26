@@ -1,25 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head>
-          <title>Instascan</title>
-                              <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-                </head>
-                  <body>
-                        <video id="preview"></video>
-                            <script type="text/javascript">
-      let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-            scanner.addListener('scan', function (content) {
-                      console.log(content);
-                            });
-      Instascan.Camera.getCameras().then(function (cameras) {
-                if (cameras.length > 0) {
-                            scanner.start(cameras[0]);
-                                    } else {
-                                                console.error('No cameras found.');
-                                                        }
-                      }).catch(function (e) {
-                console.error(e);
-                      });
-    </script>
-      </body>
+<head>
+  <title>Instascan</title>
+  <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: white; 
+}
+.link {
+  color: #004899;
+  padding: 4px 10px 4px 10px;
+  border-radius: 15px;
+  border: 1px solid #004899;
+  margin: 40px;
+  font-size: 5em;
+}
+</style>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+  <img src="./logo.svg" style="height: 140px; margin: 3%;"></img>
+
+
+  <!--  <a class="link">Scan QR-Code</a> -->
+    <video id="preview" style="width: 100%; margin-top: 20px; border: 1px solid #004899;"></video>
+  <h1>QR-Code scannen</h1>
+  <center>Bitte scannen Sie Ihren QR-Code hier ein</center>
+  <script type="text/javascript">
+    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+    scanner.addListener('scan', function (content) {
+      const a = JSON.parse(content);
+      let parameters = "?";
+      Object.entries(a).forEach(([key, value]) => parameters += (key + "=" + value + "&"));
+      document.location.href=`./navigation.html${parameters}`;
+    });
+    Instascan.Camera.getCameras().then(function (cameras) {
+      if (cameras.length > 0) {
+        scanner.start(cameras[0]);
+      } else {
+        alert("Camera could not be found.");
+      }
+    }).catch(function (e) {
+      alert("Unknown error occured.");
+    });
+  </script>
+</body>
 </html>
