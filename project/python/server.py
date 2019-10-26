@@ -1,9 +1,10 @@
 from flask import Flask
 from flask import request
 import requests
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import json
 import logging
+
 
 
 from apscheduler.scheduler import Scheduler
@@ -18,6 +19,7 @@ CORS(app)
 position_data = []
 
 @app.route("/flightData") # 2964
+@cross_origin()
 def flightData():
     url = "http://fsg-datahub.azure-api.net/legacy/Apps/AirportSTR/Flights/Get"
 
@@ -42,8 +44,8 @@ def flightData():
     return flight
 
 @app.route("/getPosition") # 2964
+@cross_origin()
 def getPos():
-
     return json.dumps(position_data)
 
 
@@ -54,8 +56,8 @@ def triang(data):
     distance = 0.1
 
     s = (data1 + data2 + distance) / 2.0
-    y = 2.0 * ((s * (s - data1) * (s - data2) * (s - distance)) ** 0.5) / distance
-    x = ((data1 * data1) - (y * y)) ** 0.5
+    y = 2.0 * (abs((s * (s - data1) * (s - data2) * (s - distance))) ** 0.5) / distance
+    x = abs(((data1 * data1) - (y * y))) ** 0.5
     return [x, y]
 
 def addPos():
@@ -76,15 +78,12 @@ def addPos():
         }
 
     response = requests.request("GET", url, headers=headers).text
-    print(response)
+    print(triang(response))
     position_data.append(triang(response))
     if(len(position_data) >= 400):
         position_data.pop(0)
-
- 
-def gatherPosData():
-    sched.add_interval_job(addPos, seconds = 1)
+    
     
 if __name__ == "__main__":
-    gatherPosData()
+    sched.add_interval_job(addPos, seconds = 1, max_instances=100)
     app.run(debug=True)
