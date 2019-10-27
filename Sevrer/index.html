@@ -56,23 +56,13 @@
           //your code
           //updateMaps(15,15);
          $.get(
-            "http://40.68.184.28:8086/get_location",
+            "http://40.68.184.28:8086/get_scaled_location",
             {paramOne : 1, paramX : 'abc'},
             function(data) {
                console.log(data)
                resp = JSON.parse(data)
-               dev5 = resp['device5']
-               dev1 = resp['device1']
-
-               dev3 = resp['device3']
-               dev4 = resp['device4']
-
-               height = 4
-               width  = 6
-
-               y = (dev1 / (dev1 + dev5)) * height
-               x = (dev3 / (dev3 + dev4)) * width
-
+               y = resp['y']
+               x = resp['x']
                updateMaps(x, y)
             }
         );
