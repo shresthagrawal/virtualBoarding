@@ -21,13 +21,18 @@ html, body {
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 <body>
+  <div style="background: lightblue; padding-bottom: 15px;">
   <img src="./logo.svg" style="height: 140px; margin: 3%;"></img>
+</div>
 
 
   <!--  <a class="link">Scan QR-Code</a> -->
     <video id="preview" style="width: 100%; margin-top: 20px; border: 1px solid #004899;"></video>
-  <h1>QR-Code scannen</h1>
-  <center>Bitte scannen Sie Ihren QR-Code hier ein</center>
+    <div style="border: 10px solid lightblue; border-radius: 10%; margin: 30px; padding-bottom: 30px;">
+      <h1 style="text-align: center;font-size: 4em">Please scan your Boarding Pass</h1>
+      <img src="./boarding_pass.png" style="width: 90%; margin-left: 5%;"></img>
+    </div>
+
   <script type="text/javascript">
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
     scanner.addListener('scan', function (content) {
@@ -43,6 +48,7 @@ html, body {
         alert("Camera could not be found.");
       }
     }).catch(function (e) {
+      alert(e);
       alert("Unknown error occured.");
     });
   </script>

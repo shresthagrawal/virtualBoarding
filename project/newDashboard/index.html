@@ -206,16 +206,18 @@
         <div style="position: relative; display: block; margin-bottom: 20px;" id="canvasContainer">
           <canvas id="canvas" width="1000px" height="500px" style=" display: block;" id="canvas">
           </canvas>
-          <img src="./poi/eat.png" oncontextmenu="removeElement(event)" class="draggable first" id="drag1" style="float: left;position: absolute; top: 0; left: 1050px;"></img><span style="font-size: 40px; position: absolute; left: 1150px; top: 20px;">Add a restaurant</span>
-          <img src="./poi/gate.png" oncontextmenu="removeElement(event)" class="draggable first" id="drag2" style="position: absolute; top: 110px; left: 1050px;"></img><span style="font-size: 40px; position: absolute; left: 1150px; top: 130px;">Add a gate</span>
-          <img src="./poi/toilet.png" oncontextmenu="removeElement(event)" class="draggable first" id="drag3" style="position: absolute; top: 220px; left: 1050px;"></img><span style="font-size: 40px; position: absolute; left: 1150px; top: 240px;">Add a toilet</span>
+          <img src="./poi/eat.png" oncontextmenu="removeElement(event)" class="draggable first drag1" style="float: left;position: absolute; top: 25px; left: 1050px;"></img><span style="font-size: 20px; position: absolute; left: 1150px; top: 35px;">Add a restaurant</span>
+          <img src="./poi/gate.png" oncontextmenu="removeElement(event)" class="draggable first drag2" style="position: absolute; top: 135px; left: 1050px;"></img><span style="font-size: 20px; position: absolute; left: 1150px; top: 160px;">Add a gate</span>
+          <img src="./poi/toilet.png" oncontextmenu="removeElement(event)" class="draggable first drag3" style="position: absolute; top: 245px; left: 1050px;"></img><span style="font-size: 20px; position: absolute; left: 1150px; top: 280px;">Add a toilet</span>
+          <img src="./poi/bus.png" oncontextmenu="removeElement(event)" class="draggable first drag4" style="position: absolute; top: 360px; left: 1050px;"></img><span style="font-size: 20px; position: absolute; left: 1150px; top: 390px;">Add a car sharing point</span>
+
         </div>
 
         <!-- Area Chart Example-->
         <div class="card mb-3">
           <div class="card-header">
             <i class="fas fa-chart-area"></i>
-            Area Chart Example</div>
+            Airport visitors last week</div>
           <div class="card-body">
             <canvas id="myAreaChart" width="100%" height="30"></canvas>
           </div>
@@ -803,11 +805,49 @@
      }
    
  
+    function calculateMinMax(series) {
+      let minArr = [0, 0]
+      for(let i= 0; i< series.length; i++) {
+        if(series[i][0] > minArr[0]) {
+          minArr[0] = series[i][0];
+        }
+        if(series[i][1] > minArr[1]) {
+          minArr[1] = series[i][1];
+        }
+      }
+      return minArr
+    }
+
+    $.get("http://localhost:5000/securityGate", function(data) {
+      const arr = JSON.parse(data);
+      const sc1Open = arr[0]["Status"] !== "closed"
+      const sc1Waittime = +arr[0]["WaitTime"] !== "closed"
+      const sc2Open = arr[1]["Status"]
+      const sc2Waittime = +arr[1]["WaitTime"]
+      const sc1Text = document.createElement("div");
+      sc1Text.innerHTML = `<font color='${sc1Open ? "green" : "red"}'>${sc1Open ? "Opened" : "Closed"}</font>${sc1Open ? sc1Waittime + "m waiting" : ""}`;
+      sc1Text.style.position = "absolute";
+      sc1Text.style.top = "80px";
+      sc1Text.style.left = "240px";
+      document.getElementById("canvasContainer").appendChild(sc1Text);
+      const sc2Text = sc1Text.cloneNode(true);
+      sc2Text.style.top = "475px"
+      sc2Text.innerHTML = `<font color='${sc2Open ? "green" : "red"}'>${sc2Open ? "Opened - " : "Closed"}</font>${sc2Open ? sc2Waittime + "m waiting" : ""}`;
+      document.getElementById("canvasContainer").appendChild(sc2Text);
+
+
+    });
+
      const p = $.get("http://localhost:5000/getPosition", function(data) {
-      // const coordArray = JSON.parse(data);
-      const coordArray = [[0.0, 0.0], [4.0, 6.0]]
-      const width = 6.0
-      const height = 4.0
+      
+     // let coordArray = JSON.parse(data);
+      //coordArray.splice(0, coordArray.length - 30)
+      console.log(coordArray)
+      //console.log(data)
+      const coordArray = [[0.48085630073970814, 1.5562280580701313], [0.48085630073970814, 1.6417413434644441], [0.48269035567796464, 1.6577201335438343], [0.32701407336226584, 1.4472605832410324], [0.3152729359527062, 1.1015424069043886], [0.4906382459169339, 1.2283628772846449], [0.4906382459169339, 1.3133564042887331], [1.0293465845459666, 1.2780176142032382], [1.0876100087279807, 1.9873826935349581], [1.0876100087279807, 1.8812485666679675], [1.1054481700912588, 1.500711196533617], [1.3714164380465608, 1.5196170025835172], [1.4467648889982927, 1.6962063613911709], [1.7139452204280772, 1.8379786780962886], [2.2382449270128104, 2.4216276189965846], [3.2183324161329416, 2.750277152422904], [5.006339447751212, 2.561331379971744], [5.180618399958033, 2.561331379971744], [5.307171841209213, 2.7345665090966365], [5.421734370566339, 2.7345665090966365], [5.389116739574494, 2.6209968795375773], [5.185433296800479, 2.64619406347466], [4.902015549535463, 3.206378628570072], [4.188739367994692, 3.1790365534819727], [3.8778929540847216, 3.1301157937289212], [2.8553449587269673, 3.0328100636413695], [1.8675424799044484, 2.8825253936415187], [2.788343619801755, 2.624393890344797], [3.101292924138819, 2.3204070015682947], [3.286463343945794, 1.8803841414608296], [3.84917435932293, 1.8803841414608296], [4.410161418293694, 1.8803841414608296], [4.2467755325797825, 1.3356129960115253], [5.051314379932357, 1.044044895186971], [5.565566449895241, 1.162013170002807], [4.98053638444227, 0.4588667813241394], [4.296347518744328, 0.3589056710483968], [3.7195861052270534, 0.30287023846796735], [3.6172041383564064, 0.42958202916383553], [3.3034680169938255, 0.4033100239287489], [3.0878095251664774, 0.48104860769054153], [2.7972609734757365, 0.5186809873462266], [2.4640255154066035, 0.5413916573397639], [2.310736955505372, 0.5453804761996335], [2.2497938272774634, 0.554316745489272]]
+      
+      const height = 4
+      const width = 6
       
 
       const widthFactor = canvasWidth / width
@@ -818,11 +858,19 @@
       for(let i = 0; i < coordArray.length - 1; i++) {
         ctx.beginPath();
         ctx.strokeStyle = "#FF0000";
-        console.log(coordArray[i][0] * heightFactor, coordArray[i][1] * widthFactor)
-        console.log(coordArray[i+1][0] * heightFactor, coordArray[i+1][1] * widthFactor)
-        ctx.moveTo(coordArray[i][1] * widthFactor, coordArray[i][0] * heightFactor);
-        ctx.lineTo(coordArray[i+1][1] * widthFactor, coordArray[i+1][0] * heightFactor);
-      //  ctx.stroke();
+        ctx.lineWidth = 3;
+        /*let constAverage = (coordArray[i][1] + coordArray[i + 1][1]) / 2;
+        if(constAverage < coordArray[i][1] * 0.94 || constAverage > coordArray[i][1] * 1.06) {
+          console.log(coordArray[i])
+          
+         // ctx.arc(coordArray[i][0] * heightFactor, coordArray[i][1] * widthFactor, 8, 0, 2 * Math.PI);
+          ctx.fillStyle = "#Ff0000";
+          ctx.fill();
+        }*/
+        ctx.moveTo(coordArray[i][0] * widthFactor, coordArray[i][1] * heightFactor);
+        ctx.lineTo(coordArray[i+1][0] * widthFactor, coordArray[i+1][1] * heightFactor);
+        //console.log(coordArray[i+1][0] * heightFactor, coordArray[i+1][1] * widthFactor)
+        ctx.stroke();
       }
 
       
@@ -830,19 +878,33 @@
      // console.log(data);
      });
  
+     function getDragClass(item) {
+       if (item.classList.contains("drag1")) {
+         return "drag1";
+       }
+       if (item.classList.contains("drag2")) {
+         return "drag2";
+       }
+       if (item.classList.contains("drag3")) {
+         return "drag3";
+       }
+       return "drag?"
+     }
+
      const draggables = [...document.getElementsByClassName("draggable")];
      for(let j = 0; j < draggables.length; j++) {
        let x = draggables[j];
-       if(window.localStorage.getItem(x.id)) {
-         let arr = JSON.parse(window.localStorage.getItem(x.id)) || [];
+       if(window.localStorage.getItem(getDragClass(x))) {
+         let arr = JSON.parse(window.localStorage.getItem(getDragClass(x))) || [];
          for(let i = 0; i < arr.length; i++) {
            let newNode = x.cloneNode(true);
            newNode.style.left = arr[i][0] + "px";
            
            newNode.style.top = arr[i][1] + "px";
-           console.log("ho:" + arr[i][1] + "px")
-           newNode.classList.remove("first");
+           
+           
            document.getElementById("canvasContainer").appendChild(newNode);
+           newNode.classList.remove("first");
          }
        }
      }
@@ -857,6 +919,8 @@
           }
            if (event.target.classList.contains("first")) {
              const newNode = event.target.cloneNode(true);
+             newNode.style.left = Math.round(+event.target.style.left);
+             newNode.style.top = Math.round(+event.target.style.top);
              event.target.classList.remove("first");
              
              
@@ -866,12 +930,12 @@
              
              
            } else {
-             let newObj = JSON.parse(window.localStorage.getItem(event.target.id));
+             let newObj = JSON.parse(window.localStorage.getItem(getDragClass(event.target)));
              let left = event.target.style.left.substr(0, event.target.style.left.length - 2)
              let top = event.target.style.top.substr(0, event.target.style.top.length - 2)
              
-             removeItem(newObj, [+left, +top])
-             window.localStorage.setItem(event.target.id, JSON.stringify(newObj));
+             removeItem(newObj, [Math.round(+left), Math.round(+top)])
+             window.localStorage.setItem(getDragClass(event.target), JSON.stringify(newObj));
            }
          
          },
@@ -879,22 +943,23 @@
             if(!event.target.classList.contains("first")) {
                 event.target.style.transform = "translateY(0%)"
             }
-           let posX = event.target.offsetLeft
-           let posY = event.target.offsetTop
+           //let posX = event.target.offsetLeft
+           //let posY = event.target.offsetTop
+           let posX = +event.target.style.left.substr(0, event.target.style.left.length - 2)
+           let posY = +event.target.style.top.substr(0, event.target.style.top.length - 2)
            if (posX > 1000) {
              document.getElementById("canvasContainer").removeChild(event.target);
              removeElement(event)
            }
-           let setValue = window.localStorage.getItem(event.target.id);
+           let setValue = window.localStorage.getItem(getDragClass(event.target));
            if(setValue) {
              
              let obj = JSON.parse(setValue);
-             obj.push([posX, posY]);
-             window.localStorage.setItem(event.target.id, JSON.stringify(obj))  
+             obj.push([Math.round(posX), Math.round(posY)]);
+             window.localStorage.setItem(getDragClass(event.target), JSON.stringify(obj))  
            } else {
-             window.localStorage.setItem(event.target.id, `[[${posX}, ${posY}]]`)
+             window.localStorage.setItem(getDragClass(event.target), `[[${Math.round(posX)}, ${Math.round(posY)}]]`)
            }
-           console.log(posX, posY)
          }
        };
        $( ".draggable" ).draggable(draggableObj);
@@ -906,13 +971,13 @@
          return;
        }
        document.getElementById('canvasContainer').removeChild(event.target);
-       let newObj = JSON.parse(window.localStorage.getItem(event.target.id));
+       let newObj = JSON.parse(window.localStorage.getItem(getDragClass(event.target)));
        let left = event.target.style.left.substr(0, event.target.style.left.length - 2)
        let top = event.target.style.top.substr(0, event.target.style.top.length - 2)
       
-       removeItem(newObj, [+left, +top])
+       removeItem(newObj, [Math.round(+left), Math.round(+top)])
  
-       window.localStorage.setItem(event.target.id, JSON.stringify(newObj));
+       window.localStorage.setItem(getDragClass(event.target), JSON.stringify(newObj));
  
      }
  
@@ -922,7 +987,7 @@
          let array1 = newObj[i]
          let array2 = item
          
-         if(array1.length === array2.length && array1.sort().every(function(value, index) { return value === array2.sort()[index]})) {
+         if(array1.length === array2.length && array1.sort().every(function(value, index) { return Math.round(value) === Math.round(array2.sort()[index])})) {
            console.log("found")
            newObj.splice(i, 1);
          }
