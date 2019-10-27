@@ -36,7 +36,7 @@ html, body {
       const a = JSON.parse(content);
       let parameters = "?";
       Object.entries(a).forEach(([key, value]) => parameters += (key + "=" + value + "&"));
-      document.location.href=`./navigation.html${parameters}`;
+      document.location.href=`./navhelp/navigation.html${parameters}`;
     });
     Instascan.Camera.getCameras().then(function (cameras) {
       if (cameras.length > 0) {
