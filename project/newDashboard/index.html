@@ -949,11 +949,13 @@
            let posY = +event.target.style.top.substr(0, event.target.style.top.length - 2)
            if (posX > 1000) {
              document.getElementById("canvasContainer").removeChild(event.target);
+             $.get(`http://localhost:5000/poiDelete?poi=[${posX + 80},${posY + 30}]`);
              removeElement(event)
+             return;
            }
            let setValue = window.localStorage.getItem(getDragClass(event.target));
+           $.get(`http://localhost:5000/poiAdd?poi=[${posX + 80},${posY + 30}]`);
            if(setValue) {
-             
              let obj = JSON.parse(setValue);
              obj.push([Math.round(posX), Math.round(posY)]);
              window.localStorage.setItem(getDragClass(event.target), JSON.stringify(obj))  
@@ -976,13 +978,13 @@
        let top = event.target.style.top.substr(0, event.target.style.top.length - 2)
       
        removeItem(newObj, [Math.round(+left), Math.round(+top)])
- 
+       
        window.localStorage.setItem(getDragClass(event.target), JSON.stringify(newObj));
  
      }
  
      function removeItem(newObj, item) {
-      
+      $.get(`http://localhost:5000/poiDelete?poi=[${item[0] + 80},${item[1] + 30}]`);
        for(let i= 0; i < newObj.length; i++) {
          let array1 = newObj[i]
          let array2 = item
@@ -1019,7 +1021,7 @@
   transition: transform 0.5s;
 }
 #canvas {
-  animation: opacitya 1s;
+  animation: opacitya 12s;
 }
 
 
