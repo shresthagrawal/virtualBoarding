@@ -41,8 +41,10 @@ def flightData():
 
     response = requests.request("GET", url, headers=headers, params=querystring).text
     array_obj = json.loads(response)
-    flight = list(filter(lambda x: x["Flight"]["Number"] == request.args.get('flightNo'), array_obj))[0]
-    return flight
+    flight = array_obj
+    if (request.args.get('flightNo') is not None):
+        flight = list(filter(lambda x: x["Flight"]["Number"] == request.args.get('flightNo'), array_obj))[0]
+    return json.dumps(flight)
 
 @app.route("/securityGate") # 2964
 @cross_origin()

@@ -41,18 +41,43 @@
             </a-entity>
         </a-marker>
     </a-scene>
-    <img src="maps.jpg" id = "indoor_nav" style="position: absolute; bottom: 0; width: 100%;left: 0%; border-radius: 50% 50%;  margin-bottom: -220px; border:5px solid DarkGray; transform: rotate3d(1, 0, 0, 40deg); transform: rotate(20deg);">
+    <img src="maps.jpg" id = "indoor_nav" style="position: absolute; bottom: 0; width: 100%;left: 0%; border-radius: 50% 50%;  margin-bottom: -220px; border:5px solid DarkGray; transform: rotate3d(1, 0, 0, 40deg); transform: rotate(20deg); height: 500px;">
 
     <img src="https://i.dlpng.com/static/png/1447226_thumb.webp" onclick="window.open('https://webchat.botframework.com/embed/airbothack?s=lEo8mGZSAeE.raF10m7MRvtqCvk2TYvISIs1RQ1-p5F-zolfuv4Wh00')" style="top: 0; left: 0; height: 80px;  width: 80px; position: absolute; padding: 10px;"> </img>
     <div class="ball" id="ball" style="position: absolute; bottom   : 0px; left  : 00px; width : 20px; height: 20px; background: green; border-radius: 100%;"></div>
 
 </body>
 <script type="text/javascript">
+    
     setTimeout(function() {
         document.getElementsByClassName("a-enter-vr")[0].style.display = "none";
         document.getElementById("arjsDebugUIContainer").style.display = "none";
-
     }, 1000);
+
+    setInterval(function() {
+        $.get("http://localhost:5000/pois", function(data) {
+            const all = JSON.parse(data);
+            
+
+            for(let i = 0; i < all.length; i++) {
+                let obj = all[i];
+                let color = "red";
+                let x = obj[1];
+                let y = obj[2];
+                
+                
+                if(!document.getElementById(`${x},${y}`)) {
+                    let newBall = document.getElementById("ball").cloneNode();                    
+                    newBall.style.left= (255 / 500 * y) + "px";
+                    newBall.id = `${x},${y}`;
+                    newBall.style.bottom= (window.screen.width / 1000 * x) + "px";
+                    newBall.style.zIndex = "1000";
+                    document.body.appendChild(newBall)
+                }
+            }
+            
+        });
+    }, 2000);
 
     function onRightDisplay(){
         var r = document.getElementById('right_ind');
