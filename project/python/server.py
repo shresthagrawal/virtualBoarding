@@ -17,6 +17,7 @@ app = Flask(__name__)
 CORS(app)
 
 position_data = []
+pois = []
 
 @app.route("/flightData") # 2964
 @cross_origin()
@@ -72,6 +73,34 @@ def securityGate():
 @cross_origin()
 def getPos():
     return json.dumps(position_data)
+
+@app.route("/pois") # 2964
+@cross_origin()
+def getPois():
+    return json.dumps(pois)
+
+@app.route("/poiAdd") # 2964
+@cross_origin()
+def poiAdd():
+    global pois
+    poi = request.args.get('poi')
+    pois.append(json.loads(poi))
+    return "1"
+
+@app.route("/poiDelete") # 2964
+@cross_origin()
+def poiDelete():
+    global pois
+    poi = request.args.get('poi')
+    pois = [ x for x in pois if not (x==json.loads(poi))]
+    return "1"
+
+@app.route("/poiDeleteAll") # 2964
+@cross_origin()
+def poiDeleteAll():
+    global pois
+    pois = []
+    return "1"
 
 def addPos():
     url = "http://40.68.184.28:8086/get_scaled_location"
