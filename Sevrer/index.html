@@ -39,18 +39,84 @@
             </a-entity>
         </a-marker>
     </a-scene>
-    <img src="maps.jpg" id = "indoor_nav" style="position: absolute; bottom: 0; width: 100%;left: 0%; border-radius: 50% 50%;  margin-bottom: -220px; border:5px solid DarkGray; transform: rotate3d(1, 0, 0, 40deg); transform: rotate(20deg);">
+    <img src="maps.jpg" id = "indoor_nav" style="position: absolute; bottom: 0; width: 100%;left: 0%; border-radius: 50% 50%;  margin-bottom: -220px; border:5px solid DarkGray; transform: rotate3d(1, 0, 0, 40deg); transform: rotate(20deg); height: 500px;">
 
     <img src="https://i.dlpng.com/static/png/1447226_thumb.webp" onclick="window.open('https://webchat.botframework.com/embed/airbothack?s=lEo8mGZSAeE.raF10m7MRvtqCvk2TYvISIs1RQ1-p5F-zolfuv4Wh00')" style="top: 0; left: 0; height: 80px;  width: 80px; position: absolute; padding: 10px;"> </img>
     <div class="ball" id="ball" style="position: absolute; bottom   : 0px; left  : 00px; width : 20px; height: 20px; background: green; border-radius: 100%;"></div>
 
 </body>
 <script type="text/javascript">
+    
     setTimeout(function() {
         document.getElementsByClassName("a-enter-vr")[0].style.display = "none";
         document.getElementById("arjsDebugUIContainer").style.display = "none";
-
     }, 1000);
+
+    let pois = []
+    setInterval(function() {
+        $.get("http://localhost:5000/pois", function(data) {
+            const all = JSON.parse(data);
+            
+
+            for(let i = 0; i < all.length; i++) {
+                let obj = all[i];
+                let color = "red";
+                if(obj[0] === 1) {
+                    color = "green";
+                } else if(obj[0] === 2) {
+                    color = "yellow";
+                } else if(obj[0] === 3) {
+                    color = "blue";
+                }
+                let x = obj[1];
+                let y = obj[2];
+                
+                
+                
+                if(!document.getElementById(`${x},${y}`)) {
+                    let newBall = document.getElementById("ball").cloneNode();                    
+                    newBall.style.left= (255 / 500 * y) + "px";
+                    newBall.id = `${x},${y}`;
+                    newBall.style.backgroundColor = color;
+                    newBall.style.bottom= (window.screen.width / 1600 * x) + "px";
+                    newBall.style.zIndex = "1000";
+                    document.body.appendChild(newBall)
+                    pois.push(obj);
+                }
+            }
+            
+        });
+    }, 2000);
+
+    // Warn if overriding existing method
+if(Array.prototype.equals)
+    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time 
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;   
+        }           
+    }       
+    return true;
+}
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
     function onRightDisplay(){
         var r = document.getElementById('right_ind');
