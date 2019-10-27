@@ -1,0 +1,5 @@
+{
+    "CoreBluetooth.framework": 1,
+    "CoreLocation.framework": 2,
+    "libz.tbd": 1
+}

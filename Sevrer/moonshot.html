@@ -1,0 +1,32 @@
+<!doctype HTML>
+<html>
+<script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
+<script src="https://raw.githack.com/jeromeetienne/AR.js/2.0.5/aframe/build/aframe-ar.js"></script>
+
+<body style='margin : 0px; overflow: hidden;'>
+    <img id ="right_ind" src="test.gif" style="margin-top: 12%; float: right;     float: right; height: 100px; margin-right: 280px;">
+    <a-scene embedded arjs>
+        <a-marker preset="hiro">
+            <a-box position='0 0.5 0' material='color: yellow;'></a-box>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+    <img src="maps.jpg" style="position: absolute; bottom: 0; width: 100%;left: 50%;transform: translateX(-50%); border-top-left-radius: 45% 45%; border-top-right-radius: 45% 45%; margin-bottom: -220px; border:5px solid DarkGray; ">
+</body>
+<script type="text/javascript">
+    setTimeout(function() {
+        document.getElementsByClassName("a-enter-vr")[0].style.display = "none";
+        document.getElementById("arjsDebugUIContainer").style.display = "none";
+
+    }, 1000);
+
+    function toggleDisplay(){
+    	var yourUl = document.getElementById('right_ind');
+		yourUl.style.display = yourUl.style.display === 'none' ? '' : 'none';
+    }
+
+    //toggleDisplay()
+    //toggleDisplay()
+</script>
+
+</html>
