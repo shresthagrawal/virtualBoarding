@@ -26,7 +26,7 @@
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-    <a class="navbar-brand mr-1" href="index.html">Start Bootstrap</a>
+    <a class="navbar-brand mr-1" href="index.html">Airport Management Portal </a>
 
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
       <i class="fas fa-bars"></i>
@@ -821,11 +821,11 @@
     $.get("http://localhost:5000/securityGate", function(data) {
       const arr = JSON.parse(data);
       const sc1Open = arr[0]["Status"] !== "closed"
-      const sc1Waittime = +arr[0]["WaitTime"] !== "closed"
+      const sc1Waittime = +arr[0]["WaitTime"]
       const sc2Open = arr[1]["Status"]
       const sc2Waittime = +arr[1]["WaitTime"]
       const sc1Text = document.createElement("div");
-      sc1Text.innerHTML = `<font color='${sc1Open ? "green" : "red"}'>${sc1Open ? "Opened" : "Closed"}</font>${sc1Open ? sc1Waittime + "m waiting" : ""}`;
+      sc1Text.innerHTML = `<font color='${sc1Open ? "green" : "red"}'>${sc1Open ? "Opened - " : "Closed"}</font>${sc1Open ? sc1Waittime + "m waiting" : ""}`;
       sc1Text.style.position = "absolute";
       sc1Text.style.top = "80px";
       sc1Text.style.left = "240px";
@@ -888,6 +888,9 @@
        if (item.classList.contains("drag3")) {
          return "drag3";
        }
+       if (item.classList.contains("drag4")) {
+         return "drag4";
+       }
        return "drag?"
      }
 
@@ -947,14 +950,16 @@
            //let posY = event.target.offsetTop
            let posX = +event.target.style.left.substr(0, event.target.style.left.length - 2)
            let posY = +event.target.style.top.substr(0, event.target.style.top.length - 2)
+           let elemNo = +getDragClass(event.target).substr(4, 1);
+           console.log(elemNo);
            if (posX > 1000) {
              document.getElementById("canvasContainer").removeChild(event.target);
-             $.get(`http://localhost:5000/poiDelete?poi=[${posX + 80},${posY + 30}]`);
+             $.get(`http://localhost:5000/poiDelete?poi=[${elemNo},${posX + 80},${posY + 30}]`);
              removeElement(event)
              return;
            }
            let setValue = window.localStorage.getItem(getDragClass(event.target));
-           $.get(`http://localhost:5000/poiAdd?poi=[${posX + 80},${posY + 30}]`);
+           $.get(`http://localhost:5000/poiAdd?poi=[${elemNo},${posX + 80},${posY + 30}]`);
            if(setValue) {
              let obj = JSON.parse(setValue);
              obj.push([Math.round(posX), Math.round(posY)]);
@@ -976,7 +981,8 @@
        let newObj = JSON.parse(window.localStorage.getItem(getDragClass(event.target)));
        let left = event.target.style.left.substr(0, event.target.style.left.length - 2)
        let top = event.target.style.top.substr(0, event.target.style.top.length - 2)
-      
+       let elemNo = +getDragClass(event.target).substr(4, 1);
+       $.get(`http://localhost:5000/poiDelete?poi=[${elemNo},${Math.round(+left) + 80},${Math.round(+top) + 30}]`);
        removeItem(newObj, [Math.round(+left), Math.round(+top)])
        
        window.localStorage.setItem(getDragClass(event.target), JSON.stringify(newObj));
@@ -984,7 +990,7 @@
      }
  
      function removeItem(newObj, item) {
-      $.get(`http://localhost:5000/poiDelete?poi=[${item[0] + 80},${item[1] + 30}]`);
+      
        for(let i= 0; i < newObj.length; i++) {
          let array1 = newObj[i]
          let array2 = item
@@ -1021,7 +1027,7 @@
   transition: transform 0.5s;
 }
 #canvas {
-  animation: opacitya 12s;
+  animation: opacitya 1s;
 }
 
 
