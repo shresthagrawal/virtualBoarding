@@ -61,6 +61,31 @@
 
     }, 1000);
 
+        setInterval(function() {
+        $.get("http://localhost:5000/pois", function(data) {
+            const all = JSON.parse(data);
+            
+
+            for(let i = 0; i < all.length; i++) {
+                let obj = all[i];
+                let color = "red";
+                let x = obj[1];
+                let y = obj[2];
+                
+                
+                if(!document.getElementById(`${x},${y}`)) {
+                    let newBall = document.getElementById("ball").cloneNode();                    
+                    newBall.style.left= (255 / 500 * y) + "px";
+                    newBall.id = `${x},${y}`;
+                    newBall.style.bottom= (window.screen.width / 1000 * x) + "px";
+                    newBall.style.zIndex = "1000";
+                    document.body.appendChild(newBall)
+                }
+            }
+            
+        });
+    }, 2000);
+
     function onRightDisplay(){
         var r = document.getElementById('right_ind');
         r.style.display = '';
