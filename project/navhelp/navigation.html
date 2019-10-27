@@ -62,7 +62,7 @@
     }, 1000);
 
         setInterval(function() {
-        $.get("http://localhost:5000/pois", function(data) {
+        $.get("http://40.68.184.28:8005/pois", function(data) {
             const all = JSON.parse(data);
             
 
@@ -84,7 +84,7 @@
                     let newBall = document.getElementById("ball").cloneNode();                    
                     newBall.style.left= (255 / 500 * y) + "px";
                     newBall.id = `${x},${y}`;
-                    newBall.style.bottom= (window.screen.width / 1000 * x) + "px";
+                    newBall.style.bottom= (window.screen.width / 2600 * x) + "px";
                     newBall.style.backgroundColor = color;
                     newBall.style.zIndex = "1000";
                     document.body.appendChild(newBall)
