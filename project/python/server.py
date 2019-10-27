@@ -43,6 +43,31 @@ def flightData():
     flight = list(filter(lambda x: x["Flight"]["Number"] == request.args.get('flightNo'), array_obj))[0]
     return flight
 
+@app.route("/securityGate") # 2964
+@cross_origin()
+def securityGate():
+    url = "http://fsg-datahub.azure-api.net/legacy/Apps/AirportSTR/SecurityCheckpoints/GetWaitTimes"
+
+
+    headers = {
+        'Ocp-Apim-Subscription-Key': "475b4e5d6c51428693d123cb7ecd9ef5",
+        'User-Agent': "PostmanRuntime/7.18.0",
+        'Accept': "*/*",
+        'Cache-Control': "no-cache",
+        'Postman-Token': "42fc9fee-969c-4678-a59b-9c75e47e4913,6e6a4e37-054e-4e93-b0be-7186646b4576",
+        'Host': "fsg-datahub.azure-api.net",
+        'Accept-Encoding': "gzip, deflate",
+        'Connection': "keep-alive",
+        'cache-control': "no-cache",
+        'Access-Control-Allow-Origin': "localhost"
+        }
+
+    response = requests.request("GET", url, headers=headers).text
+    
+    return response
+
+
+
 @app.route("/getPosition") # 2964
 @cross_origin()
 def getPos():
