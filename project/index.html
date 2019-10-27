@@ -43,7 +43,13 @@ html, body {
     });
     Instascan.Camera.getCameras().then(function (cameras) {
       if (cameras.length > 0) {
-        scanner.start(cameras[1]);
+        if(cameras.length == 2) {
+          alert("camera 2")
+          scanner.start(cameras[1]);
+        } else {
+          alert("camera 1")
+          scanner.start(cameras[0]);
+        }
       } else {
         alert("Camera could not be found.");
       }
