@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AirMap</title>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map, marker;
+      function initMap() {
+
+        var initial_Locatiom = {lat: 48.68264, lng: 9.1992873}
+        var map_center = {lat: 48.68764, lng: 9.2033873}
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: map_center,
+          disableDefaultUI: true,
+          zoom: 16
+        });
+
+
+        //0.011 / 30  0.00036666666
+        //0.003 / 30  0.0001
+
+        var icon = {
+            url: 'http://www.myiconfinder.com/uploads/iconsets/256-256-805acbe9bb30960ac19dded197fbf2e8.png', // url
+            scaledSize: new google.maps.Size(50, 50), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(0, 0) // anchor
+        };
+         marker = new google.maps.Marker({
+          map:map,
+          // draggable:true,
+          // animation: google.maps.Animation.DROP,
+          position: initial_Locatiom,
+          icon:  icon // null = default icon
+        });
+
+         time=setInterval(function(){
+          //your code
+          //updateMaps(15,15);
+         $.get(
+            "http://40.68.184.28:8086/get_location",
+            {paramOne : 1, paramX : 'abc'},
+            function(data) {
+               console.log(data)
+               resp = JSON.parse(data)
+               dev5 = resp['device5']
+               dev1 = resp['device1']
+
+               dev3 = resp['device3']
+               dev4 = resp['device4']
+
+               height = 4
+               width  = 6
+
+               y = (dev1 / (dev1 + dev5)) * height
+               x = (dev3 / (dev3 + dev4)) * width
+
+               updateMaps(x, y)
+            }
+        );
+          },1000);
+         
+        
+
+      }
+
+      function updateMaps(new_x, new_y){
+        delta_x = new_x * 0.0076666666
+        delta_y = new_y * 0.0074
+        var newPosition = {lat: 48.68264 + delta_x, lng: 9.1992873 + delta_y}
+        setTimeout(function() {
+           marker.setPosition(newPosition)
+        }, 1000);
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0iQLz8rDP_cIJ_MGn1phmA1cYxT49O-Q&callback=initMap"
+    async defer></script>
+  </body>
+</html>
