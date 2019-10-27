@@ -72,12 +72,20 @@
                 let x = obj[1];
                 let y = obj[2];
                 
+                if(obj[0] === 1) {
+                    color = "green";
+                } else if(obj[0] === 2) {
+                    color = "yellow";
+                } else if(obj[0] === 3) {
+                    color = "blue";
+                }
                 
                 if(!document.getElementById(`${x},${y}`)) {
                     let newBall = document.getElementById("ball").cloneNode();                    
                     newBall.style.left= (255 / 500 * y) + "px";
                     newBall.id = `${x},${y}`;
                     newBall.style.bottom= (window.screen.width / 1000 * x) + "px";
+                    newBall.style.backgroundColor = color;
                     newBall.style.zIndex = "1000";
                     document.body.appendChild(newBall)
                 }
