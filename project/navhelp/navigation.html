@@ -68,18 +68,17 @@
 
             for(let i = 0; i < all.length; i++) {
                 let obj = all[i];
-                let color = "red";
+                let color = "yellow";
                 let x = obj[1];
                 let y = obj[2];
                 
                 if(obj[0] === 1) {
-                    color = "green";
+                    color = "red";
                 } else if(obj[0] === 2) {
-                    color = "yellow";
+                    color = "green";
                 } else if(obj[0] === 3) {
                     color = "blue";
-                }
-                
+                }                
                 if(!document.getElementById(`${x},${y}`)) {
                     let newBall = document.getElementById("ball").cloneNode();                    
                     newBall.style.left= (255 / 500 * y) + "px";
