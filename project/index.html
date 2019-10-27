@@ -27,36 +27,23 @@ html, body {
 
 
   <!--  <a class="link">Scan QR-Code</a> -->
-    <video id="preview" style="width: 100%; margin-top: 20px; border: 1px solid #004899;"></video>
-    <div style="border: 10px solid lightblue; border-radius: 10%; margin: 30px; padding-bottom: 30px;">
-      <h1 style="text-align: center;font-size: 4em">Please scan your Boarding Pass</h1>
+    <div >
+      <h1 style="text-align: center;font-size: 4em; color: #004899">Please Scan Your Boarding Pass</h1>
+      <div style="font-size: 2em; margin: 5%;">
+        In the next step, you have to scan the QR-Code from your boarding pass.<br/><br/>
+        The image below shows you the exact location.
+      </div>
       <img src="./boarding_pass.png" style="width: 90%; margin-left: 5%;"></img>
     </div>
-
-  <script type="text/javascript">
-    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-    scanner.addListener('scan', function (content) {
-      const a = JSON.parse(content);
-      let parameters = "?";
-      Object.entries(a).forEach(([key, value]) => parameters += (key + "=" + value + "&"));
-      document.location.href=`./navigation.html${parameters}`;
-    });
-    Instascan.Camera.getCameras().then(function (cameras) {
-      if (cameras.length > 0) {
-        if(cameras.length == 2) {
-          alert("camera 2")
-          scanner.start(cameras[1]);
-        } else {
-          alert("camera 1")
-          scanner.start(cameras[0]);
-        }
-      } else {
-        alert("Camera could not be found.");
-      }
-    }).catch(function (e) {
-      alert(e);
-      alert("Unknown error occured.");
-    });
-  </script>
+    <center>
+      <div id="but" style="width: 90%;text-decoration: none; text-align: center;font-size: 1.4em;border: 10px solid lightblue; padding: 20px; margin: 20px; border-radius: 20px; margin-top: 50px;">
+        <a  href="./index2.html" style="color: #004899; text-decoration: none; font-size: 4em; padding: 20px; margin: 20px; ">Let's start</a>
+      </div>
+    </center>
+    <style>
+     #but:hover {
+      background-color: lightblue;
+     }
+    </style>
 </body>
 </html>
