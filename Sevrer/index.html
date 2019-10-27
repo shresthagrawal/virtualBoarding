@@ -8,7 +8,8 @@
 
 
 <body style='margin : 0px; overflow: hidden;'>
-    <img id ="right_ind" src="test.gif" style="margin-top: 12%; float: right;     float: right; height: 100px; margin-right: 280px;">
+    <img id ="right_ind" src="right.gif" style="margin-top: 12%; float: right;     float: right; height: 100px; margin-right: 280px;">
+    <img id ="left_ind" src="left.gif" style="margin-top: 12%; float: left;     float: left; height: 100px; margin-left: 280px;">
     <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
         <a-marker preset="hiro">
             <a-box position='0 0.5 0' material='color: yellow;'></a-box>
@@ -39,20 +40,42 @@
 
     }, 1000);
 
-    function toggleDisplay(){
-    	var yourUl = document.getElementById('right_ind');
-		yourUl.style.display = yourUl.style.display === 'none' ? '' : 'none';
+    function onRightDisplay(){
+        var r = document.getElementById('right_ind');
+        r.style.display = '';
+        var l = document.getElementById('left_ind');
+        l.style.display = 'none';
     }
 
-    //toggleDisplay()
-    //toggleDisplay()
+    function offRightDisplay(){
+        var r = document.getElementById('right_ind');
+        r.style.display = 'none';
+        var l = document.getElementById('left_ind');
+        l.style.display = '';
+    }
+
+    function offAllDisplay(){
+        var r = document.getElementById('right_ind');
+        r.style.display = 'none';
+        var l = document.getElementById('left_ind');
+        l.style.display = 'none';
+    }
     
-
+    var start = 80;
+    var end = 110;
     function rotateIndoorMap(angle){
-    	     document.getElementById("indoor_nav").style.transform="rotate(" +angle+ "deg)";
-
+            console.log(angle);
+           document.getElementById("indoor_nav").style.transform="rotate(" +angle+ "deg)";
+             if (angle > start && angle < end){
+                offAllDisplay();
+             }
+             else if(angle < start) {
+                onRightDisplay();
+             }
+             else if(angle > end) {
+                offRightDisplay();
+             }
     }
-
 
       
 
