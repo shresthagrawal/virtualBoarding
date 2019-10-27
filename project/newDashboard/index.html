@@ -361,7 +361,7 @@
       return minArr
     }
 
-    $.get("http://localhost:5000/securityGate", function(data) {
+    $.get("http://40.68.184.28:8005/securityGate", function(data) {
       const arr = JSON.parse(data);
       const sc1Open = arr[0]["Status"] !== "closed"
       const sc1Waittime = +arr[0]["WaitTime"]
@@ -381,7 +381,7 @@
 
     });
 
-     const p = $.get("http://localhost:5000/getPosition", function(data) {
+     const p = $.get("http://40.68.184.28:8005/getPosition", function(data) {
       
       let coordArray = JSON.parse(data);
       //coordArray.splice(0, coordArray.length - 30)
@@ -497,12 +497,12 @@
            console.log(elemNo);
            if (posX > 1000) {
              document.getElementById("canvasContainer").removeChild(event.target);
-             $.get(`http://localhost:5000/poiDelete?poi=[${elemNo},${posX + 80},${posY + 30}]`);
+             $.get(`http://40.68.184.28:8005/poiDelete?poi=[${elemNo},${posX + 80},${posY + 30}]`);
              removeElement(event)
              return;
            }
            let setValue = window.localStorage.getItem(getDragClass(event.target));
-           $.get(`http://localhost:5000/poiAdd?poi=[${elemNo},${posX + 80},${posY + 30}]`);
+           $.get(`http://40.68.184.28:8005/poiAdd?poi=[${elemNo},${posX + 80},${posY + 30}]`);
            if(setValue) {
              let obj = JSON.parse(setValue);
              obj.push([Math.round(posX), Math.round(posY)]);
@@ -525,7 +525,7 @@
        let left = event.target.style.left.substr(0, event.target.style.left.length - 2)
        let top = event.target.style.top.substr(0, event.target.style.top.length - 2)
        let elemNo = +getDragClass(event.target).substr(4, 1);
-       $.get(`http://localhost:5000/poiDelete?poi=[${elemNo},${Math.round(+left) + 80},${Math.round(+top) + 30}]`);
+       $.get(`http://40.68.184.28:8005/poiDelete?poi=[${elemNo},${Math.round(+left) + 80},${Math.round(+top) + 30}]`);
        removeItem(newObj, [Math.round(+left), Math.round(+top)])
        
        window.localStorage.setItem(getDragClass(event.target), JSON.stringify(newObj));
@@ -546,7 +546,7 @@
      }
    </script>
     <script>
-        $.get("http://localhost:5000/flightData", function(data) {
+        $.get("http://40.68.184.28:8005/flightData", function(data) {
           let all = JSON.parse(data);
           for (let i = 0; i < all.length; i++) {
             let obj = all[i];
